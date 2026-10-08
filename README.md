@@ -60,6 +60,9 @@ netsentry download nsl-kdd
 
 # 2. train + calibrate + evaluate; writes models/nsl-kdd-rf.joblib and reports/nsl-kdd-rf.html
 netsentry train --dataset nsl-kdd --model rf
+#    ...or skip training and grab the pretrained model from the v0.1.0 release
+curl -L --create-dirs -o models/nsl-kdd-rf.joblib \
+  https://github.com/Mohammmed-Waleed/Intrusion-Detection-System-IDS-/releases/download/v0.1.0/nsl-kdd-rf.joblib
 
 # 3. watch it work as a live sensor: alerts stream to the terminal and to a JSONL log
 netsentry detect --model models/nsl-kdd-rf.joblib --input data/nsl-kdd/KDDTest+.txt \
@@ -166,7 +169,7 @@ pytest
 - **No packet capture.** NetSentry classifies connection or flow records, not raw packets. For live use, put a flow exporter in front of it (CICFlowMeter for CICIDS2017-style features).
 - **Supervised models detect known behaviour best.** Detection on unseen NSL-KDD attacks is good overall (87.6%), but attacks that look like normal sessions still slip through. `snmpgetattack` is detected 0% of the time (its records are essentially indistinguishable from normal SNMP traffic), `mailbomb` 34%, and even the *seen* `guess_passwd` only 43%, because its KDDTest+ records differ from the training ones. The per-attack chart in the report shows all of these.
 - **False-alarm rates shift with the network.** Recalibrate the threshold on benign traffic from where the model will run.
-- **Only load model bundles you trust.** They are joblib/pickle files and can execute code when loaded.
+- **Only load model bundles you trust.** They are joblib/pickle files and can execute code when loaded. The [v0.1.0 release](https://github.com/Mohammmed-Waleed/Intrusion-Detection-System-IDS-/releases/tag/v0.1.0) publishes a SHA-256 for its model. Pickled models are also tied to the scikit-learn version they were built with (1.7.1); retrain if loading fails.
 
 ## License
 
