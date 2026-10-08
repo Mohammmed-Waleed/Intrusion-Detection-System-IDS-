@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "netsentry"
+version = "0.1.0"
+description = "Machine-learning intrusion detection: classify malicious network traffic trained on NSL-KDD or CICIDS2017"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = [
+    "scikit-learn>=1.3",
+    "pandas>=1.5",
+    "numpy>=1.24",
+    "joblib>=1.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+netsentry = "netsentry.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["netsentry*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

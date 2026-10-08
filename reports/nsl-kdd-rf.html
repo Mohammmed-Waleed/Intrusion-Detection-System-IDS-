@@ -1,0 +1,279 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NetSentry report</title><style>
+:root{color-scheme:light;
+  --page:#f9f9f7;--surface-1:#fcfcfb;--text-primary:#0b0b0b;--text-secondary:#52514e;--muted:#898781;
+  --grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);
+  --series-1:#2a78d6;--series-2:#eb6834;--good:#006300;--critical:#d03b3b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --page:#0d0d0d;--surface-1:#1a1a19;--text-primary:#fff;--text-secondary:#c3c2b7;--muted:#898781;
+  --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);
+  --series-1:#3987e5;--series-2:#d95926;--good:#0ca30c;--critical:#e66767}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --page:#0d0d0d;--surface-1:#1a1a19;--text-primary:#fff;--text-secondary:#c3c2b7;--muted:#898781;
+  --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);
+  --series-1:#3987e5;--series-2:#d95926;--good:#0ca30c;--critical:#e66767}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text-primary);
+  font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1080px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 4px;font-weight:650}
+h2{font-size:17px;margin:0 0 4px;font-weight:620}
+.sub{color:var(--text-secondary);margin:0}
+.lede{font-size:17px;margin:20px 0 24px;max-width:72ch}
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:12px;padding:20px;margin:0 0 20px}
+.card .sub{margin-bottom:16px;font-size:14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:0 0 20px}
+.tile{background:var(--surface-1);border:1px solid var(--border);border-radius:12px;padding:16px}
+.tile .label{color:var(--text-secondary);font-size:13px}
+.tile .value{font-size:30px;font-weight:620;margin:2px 0}
+.tile .note{color:var(--muted);font-size:12.5px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:20px}
+.grid2>.card{margin:0;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--grid);font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--text-secondary);font-weight:560}
+.scroll{overflow-x:auto}
+.cm td.cell{text-align:center;min-width:64px;border:2px solid var(--surface-1)}
+.cm th.rot{text-align:center}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--text-secondary);margin:0 0 8px}
+.key{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+svg{display:block;max-width:100%;height:auto;overflow:visible}
+svg text{fill:var(--muted);font-size:12px}
+svg .lbl{fill:var(--text-secondary)}
+svg .val{fill:var(--text-primary);font-size:11.5px;font-variant-numeric:tabular-nums}
+[data-tip]{cursor:default}
+#tip{position:fixed;pointer-events:none;background:var(--surface-1);color:var(--text-primary);
+  border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12.5px;line-height:1.45;
+  box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:10;white-space:pre;max-width:320px}
+details summary{cursor:pointer;color:var(--text-secondary);margin-top:8px}
+code{font-size:13px}
+.foot{color:var(--muted);font-size:12.5px}
+</style></head><body>
+<main>
+  <h1>NetSentry · rf on nsl-kdd</h1>
+  <p class="sub">NSL-KDD (KDDTrain+ → KDDTest+) · trained 2026-10-08 18:41 UTC ·
+    113,377 training rows · fit in 4.28s ·
+    scores ~102,345 rows/s</p>
+  <p class="lede">On 22,544 held-out test records (12,833 attacks), the detector flags <b>89.3%</b> of attacks while raising a false alarm on <b>10.1%</b> of normal traffic. On the 17 attack types it <i>never saw during training</i> (3,750 records) it still catches <b>87.6%</b>. The threshold was tuned for 1.0% false alarms on validation data (achieved 0.9%); the higher rate on the test set reflects the distribution shift between the two.</p>
+  <div class="tiles"><div class="tile"><div class="label">Detection rate</div><div class="value">89.3%</div><div class="note">attacks flagged (recall)</div></div><div class="tile"><div class="label">False-alarm rate</div><div class="value">10.1%</div><div class="note">normal traffic flagged</div></div><div class="tile"><div class="label">ROC-AUC</div><div class="value">0.959</div><div class="note">threshold-free ranking quality</div></div><div class="tile"><div class="label">Family accuracy</div><div class="value">82.7%</div><div class="note">macro-F1 0.708 across families</div></div><div class="tile"><div class="label">Novel attacks caught</div><div class="value">87.6%</div><div class="note">17 types unseen in training</div></div></div>
+
+  <div class="grid2">
+    <div class="card"><h2>ROC curve</h2>
+      <p class="sub">Every possible alert threshold on the test set. The dot is the threshold this model ships with
+      (0.065). Hover the curve for other operating points.</p>
+      <svg class="roc" viewBox="0 0 440 380" width="440" role="img" aria-label="ROC curve" data-roc="{&quot;fpr&quot;: [0.0, 0.00412, 0.00587, 0.007, 0.007, 0.00803, 0.00803, 0.00927, 0.0104, 0.01143, 0.01246, 0.01246, 0.01359, 0.01359, 0.01473, 0.01473, 0.01576, 0.0172, 0.0172, 0.01802, 0.01802, 0.01833, 0.01895, 0.01895, 0.01895, 0.01915, 0.01957, 0.01957, 0.01977, 0.02018, 0.02018, 0.02018, 0.0206, 0.0208, 0.02142, 0.02204, 0.02224, 0.02276, 0.02276, 0.02286, 0.02296, 0.02307, 0.02307, 0.02307, 0.02307, 0.02307, 0.02307, 0.02317, 0.02317, 0.02348, 0.02358, 0.02358, 0.02358, 0.02358, 0.02358, 0.02368, 0.02368, 0.02368, 0.02368, 0.02368, 0.02368, 0.02379, 0.02379, 0.02379, 0.02379, 0.02389, 0.02389, 0.02389, 0.02389, 0.02389, 0.02399, 0.0241, 0.0243, 0.02471, 0.02533, 0.02533, 0.02544, 0.02544, 0.02544, 0.02544, 0.02554, 0.02554, 0.02554, 0.02554, 0.02554, 0.02554, 0.02554, 0.02554, 0.02554, 0.02554, 0.02554, 0.02554, 0.02564, 0.02564, 0.02564, 0.02574, 0.02574, 0.02574, 0.02574, 0.02574, 0.02574, 0.02574, 0.02574, 0.02574, 0.02574, 0.02574, 0.02574, 0.02574, 0.02585, 0.02595, 0.02595, 0.02595, 0.02595, 0.02605, 0.02626, 0.02626, 0.02626, 0.02626, 0.02636, 0.02667, 0.02688, 0.02698, 0.02708, 0.02739, 0.02749, 0.02749, 0.0277, 0.02791, 0.02791, 0.02811, 0.02822, 0.02822, 0.02863, 0.02863, 0.02863, 0.02914, 0.02925, 0.02935, 0.02966, 0.02976, 0.02986, 0.02997, 0.02997, 0.03007, 0.03027, 0.03027, 0.03048, 0.03089, 0.0311, 0.0311, 0.03141, 0.03254, 0.03295, 0.03306, 0.03439, 0.03439, 0.03511, 0.03584, 0.03584, 0.03604, 0.03656, 0.03769, 0.03892, 0.04026, 0.0416, 0.0416, 0.06961, 0.08279, 0.08279, 0.08887, 0.08938, 0.0901, 0.09041, 0.09062, 0.09103, 0.09206, 0.09227, 0.09227, 0.09309, 0.0935, 0.09391, 0.09546, 0.09587, 0.09669, 0.09875, 0.09927, 0.09989, 0.10102, 0.10102, 0.10184, 0.10401, 0.10411, 0.10524, 0.10926, 0.11163, 0.1141, 0.12172, 0.12769, 0.13922, 1.0], &quot;tpr&quot;: [0.0, 0.42118, 0.43022, 0.4345, 0.43536, 0.43856, 0.43965, 0.44354, 0.45095, 0.45796, 0.4649, 0.46505, 0.47004, 0.47051, 0.47378, 0.47417, 0.47799, 0.48103, 0.4811, 0.48461, 0.48492, 0.4896, 0.49529, 0.49544, 0.4956, 0.49778, 0.49934, 0.49957, 0.50168, 0.50316, 0.50323, 0.50596, 0.50713, 0.50845, 0.51056, 0.51212, 0.51399, 0.51492, 0.515, 0.5171, 0.51781, 0.51858, 0.51866, 0.51999, 0.52131, 0.52139, 0.52279, 0.52427, 0.52435, 0.52942, 0.53316, 0.53323, 0.53588, 0.54103, 0.54118, 0.54204, 0.54305, 0.54313, 0.54407, 0.54531, 0.54539, 0.54633, 0.54765, 0.54773, 0.54866, 0.54968, 0.54975, 0.55092, 0.55225, 0.55233, 0.55272, 0.5563, 0.55692, 0.55716, 0.55825, 0.5584, 0.55903, 0.5595, 0.55957, 0.56027, 0.56098, 0.56144, 0.56238, 0.5644, 0.56518, 0.56542, 0.56596, 0.56604, 0.56643, 0.56682, 0.56713, 0.56737, 0.56752, 0.56768, 0.5683, 0.56861, 0.56885, 0.56892, 0.56924, 0.56939, 0.56947, 0.57064, 0.57103, 0.57134, 0.5722, 0.57282, 0.57329, 0.57399, 0.57539, 0.57609, 0.57617, 0.57781, 0.57874, 0.57921, 0.58163, 0.58233, 0.5824, 0.5842, 0.5849, 0.58599, 0.5884, 0.58981, 0.59215, 0.599, 0.60267, 0.60711, 0.61435, 0.61747, 0.62113, 0.63165, 0.63415, 0.63765, 0.64248, 0.64513, 0.64848, 0.65729, 0.65978, 0.66259, 0.66859, 0.6721, 0.67397, 0.68168, 0.68464, 0.68815, 0.69243, 0.69423, 0.69641, 0.69968, 0.70225, 0.70233, 0.7042, 0.70763, 0.70981, 0.71137, 0.71456, 0.71464, 0.71737, 0.7222, 0.72228, 0.72516, 0.73093, 0.73405, 0.73779, 0.74051, 0.74402, 0.74418, 0.75041, 0.75392, 0.75399, 0.76475, 0.77098, 0.77753, 0.78314, 0.78781, 0.79179, 0.8027, 0.80737, 0.80745, 0.81532, 0.81813, 0.82148, 0.83153, 0.83652, 0.84283, 0.86371, 0.8722, 0.88405, 0.89332, 0.8934, 0.904, 0.91701, 0.91701, 0.92722, 0.9534, 0.96096, 0.96852, 0.97732, 0.97966, 0.98364, 1.0]}" data-x0="48" data-y0="14" data-w="370" data-h="320"><line x1="48" x2="48" y1="14" y2="334" stroke="var(--grid)"/><line x1="48" x2="418" y1="334" y2="334" stroke="var(--grid)"/><text x="48" y="350" text-anchor="middle">0%</text><text x="40" y="338" text-anchor="end">0%</text><line x1="140.5" x2="140.5" y1="14" y2="334" stroke="var(--grid)"/><line x1="48" x2="418" y1="254.0" y2="254.0" stroke="var(--grid)"/><text x="140.5" y="350" text-anchor="middle">25%</text><text x="40" y="258.0" text-anchor="end">25%</text><line x1="233.0" x2="233.0" y1="14" y2="334" stroke="var(--grid)"/><line x1="48" x2="418" y1="174.0" y2="174.0" stroke="var(--grid)"/><text x="233.0" y="350" text-anchor="middle">50%</text><text x="40" y="178.0" text-anchor="end">50%</text><line x1="325.5" x2="325.5" y1="14" y2="334" stroke="var(--grid)"/><line x1="48" x2="418" y1="94.0" y2="94.0" stroke="var(--grid)"/><text x="325.5" y="350" text-anchor="middle">75%</text><text x="40" y="98.0" text-anchor="end">75%</text><line x1="418" x2="418" y1="14" y2="334" stroke="var(--grid)"/><line x1="48" x2="418" y1="14" y2="14" stroke="var(--grid)"/><text x="418" y="350" text-anchor="middle">100%</text><text x="40" y="18" text-anchor="end">100%</text><line x1="48" y1="334" x2="418" y2="334" stroke="var(--axis)"/><line x1="48" y1="334" x2="418" y2="14" stroke="var(--axis)"/><text x="277.4" y="154.79999999999998" transform="rotate(-41 277.4 154.79999999999998)">chance</text><text x="233.0" y="378" text-anchor="middle">False-alarm rate</text><text x="12" y="174.0" text-anchor="middle" transform="rotate(-90 12 174.0)">Detection rate</text><polyline points="48.0,334.0 49.5,199.2 50.2,196.3 50.6,195.0 50.6,194.7 51.0,193.7 51.0,193.3 51.4,192.1 51.8,189.7 52.2,187.5 52.6,185.2 52.6,185.2 53.0,183.6 53.0,183.4 53.5,182.4 53.5,182.3 53.8,181.0 54.4,180.1 54.4,180.0 54.7,178.9 54.7,178.8 54.8,177.3 55.0,175.5 55.0,175.5 55.0,175.4 55.1,174.7 55.2,174.2 55.2,174.1 55.3,173.5 55.5,173.0 55.5,173.0 55.5,172.1 55.6,171.7 55.7,171.3 55.9,170.6 56.2,170.1 56.2,169.5 56.4,169.2 56.4,169.2 56.5,168.5 56.5,168.3 56.5,168.1 56.5,168.0 56.5,167.6 56.5,167.2 56.5,167.2 56.5,166.7 56.6,166.2 56.6,166.2 56.7,164.6 56.7,163.4 56.7,163.4 56.7,162.5 56.7,160.9 56.7,160.8 56.8,160.5 56.8,160.2 56.8,160.2 56.8,159.9 56.8,159.5 56.8,159.5 56.8,159.2 56.8,158.8 56.8,158.7 56.8,158.4 56.8,158.1 56.8,158.1 56.8,157.7 56.8,157.3 56.8,157.3 56.9,157.1 56.9,156.0 57.0,155.8 57.1,155.7 57.4,155.4 57.4,155.3 57.4,155.1 57.4,155.0 57.4,154.9 57.4,154.7 57.4,154.5 57.4,154.3 57.4,154.0 57.4,153.4 57.4,153.1 57.4,153.1 57.4,152.9 57.4,152.9 57.4,152.7 57.4,152.6 57.4,152.5 57.4,152.4 57.5,152.4 57.5,152.3 57.5,152.1 57.5,152.0 57.5,152.0 57.5,151.9 57.5,151.8 57.5,151.8 57.5,151.8 57.5,151.4 57.5,151.3 57.5,151.2 57.5,150.9 57.5,150.7 57.5,150.5 57.5,150.3 57.6,149.9 57.6,149.7 57.6,149.6 57.6,149.1 57.6,148.8 57.6,148.7 57.7,147.9 57.7,147.7 57.7,147.6 57.7,147.1 57.8,146.8 57.9,146.5 57.9,145.7 58.0,145.3 58.0,144.5 58.1,142.3 58.2,141.1 58.2,139.7 58.2,137.4 58.3,136.4 58.3,135.2 58.4,131.9 58.4,131.1 58.4,130.0 58.6,128.4 58.6,127.6 58.6,126.5 58.8,123.7 58.8,122.9 58.9,122.0 59.0,120.1 59.0,118.9 59.0,118.3 59.1,115.9 59.1,114.9 59.1,113.8 59.2,112.4 59.2,111.8 59.3,111.1 59.4,110.1 59.5,109.3 59.5,109.3 59.6,108.7 60.0,107.6 60.2,106.9 60.2,106.4 60.7,105.3 60.7,105.3 61.0,104.4 61.3,102.9 61.3,102.9 61.3,101.9 61.5,100.1 61.9,99.1 62.4,97.9 62.9,97.0 63.4,95.9 63.4,95.9 73.8,93.9 78.6,92.7 78.6,92.7 80.9,89.3 81.1,87.3 81.3,85.2 81.5,83.4 81.5,81.9 81.7,80.6 82.1,77.1 82.1,75.6 82.1,75.6 82.4,73.1 82.6,72.2 82.7,71.1 83.3,67.9 83.5,66.3 83.8,64.3 84.5,57.6 84.7,54.9 85.0,51.1 85.4,48.1 85.4,48.1 85.7,44.7 86.5,40.6 86.5,40.6 86.9,37.3 88.4,28.9 89.3,26.5 90.2,24.1 93.0,21.3 95.2,20.5 99.5,19.2 418.0,14.0" fill="none" stroke="var(--series-1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line class="cross" x1="0" x2="0" y1="14" y2="334" stroke="var(--axis)" style="display:none"/><circle cx="85.4" cy="48.1" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><text class="lbl" x="95.4" y="64.1" text-anchor="start">operating point: 89.3% detected at 10.1% FAR</text><circle class="cross-dot" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2" style="display:none"/><rect class="roc-hit" x="48" y="14" width="370" height="320" fill="transparent"/></svg></div>
+    <div class="card"><h2>Which family does it predict?</h2>
+      <p class="sub">Row-normalised confusion matrix: each row is a true family and sums to 100%. Hover a cell for counts.</p>
+      <div class="scroll"><table class="cm"><tr><th>true ↓ / predicted →</th><th class="rot">normal</th><th class="rot">DoS</th><th class="rot">Probe</th><th class="rot">R2L</th><th class="rot">U2R</th><th>rows</th></tr><tr><th>normal</th><td class="cell" style="background:color-mix(in oklab,var(--series-1) 90%,var(--surface-1));color:#fff" data-tip="true normal -&gt; predicted normal&#10;8,730 rows (89.9% of normal)">90%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 2%,var(--surface-1));color:var(--text-primary)" data-tip="true normal -&gt; predicted DoS&#10;205 rows (2.1% of normal)">2%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 8%,var(--surface-1));color:var(--text-primary)" data-tip="true normal -&gt; predicted Probe&#10;751 rows (7.7% of normal)">8%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 0%,var(--surface-1));color:var(--text-primary)" data-tip="true normal -&gt; predicted R2L&#10;15 rows (0.2% of normal)">0%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 0%,var(--surface-1));color:var(--text-primary)" data-tip="true normal -&gt; predicted U2R&#10;10 rows (0.1% of normal)">0%</td><td>9,711</td></tr><tr><th>DoS</th><td class="cell" style="background:color-mix(in oklab,var(--series-1) 3%,var(--surface-1));color:var(--text-primary)" data-tip="true DoS -&gt; predicted normal&#10;198 rows (2.7% of DoS)">3%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 88%,var(--surface-1));color:#fff" data-tip="true DoS -&gt; predicted DoS&#10;6,572 rows (88.1% of DoS)">88%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 8%,var(--surface-1));color:var(--text-primary)" data-tip="true DoS -&gt; predicted Probe&#10;587 rows (7.9% of DoS)">8%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 1%,var(--surface-1));color:var(--text-primary)" data-tip="true DoS -&gt; predicted R2L&#10;103 rows (1.4% of DoS)">1%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 0%,var(--surface-1));color:var(--text-primary)" data-tip="true DoS -&gt; predicted U2R&#10;0 rows (0.0% of DoS)">0%</td><td>7,460</td></tr><tr><th>Probe</th><td class="cell" style="background:color-mix(in oklab,var(--series-1) 0%,var(--surface-1));color:var(--text-primary)" data-tip="true Probe -&gt; predicted normal&#10;0 rows (0.0% of Probe)">0%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 8%,var(--surface-1));color:var(--text-primary)" data-tip="true Probe -&gt; predicted DoS&#10;203 rows (8.4% of Probe)">8%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 92%,var(--surface-1));color:#fff" data-tip="true Probe -&gt; predicted Probe&#10;2,218 rows (91.6% of Probe)">92%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 0%,var(--surface-1));color:var(--text-primary)" data-tip="true Probe -&gt; predicted R2L&#10;0 rows (0.0% of Probe)">0%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 0%,var(--surface-1));color:var(--text-primary)" data-tip="true Probe -&gt; predicted U2R&#10;0 rows (0.0% of Probe)">0%</td><td>2,421</td></tr><tr><th>R2L</th><td class="cell" style="background:color-mix(in oklab,var(--series-1) 40%,var(--surface-1));color:var(--text-primary)" data-tip="true R2L -&gt; predicted normal&#10;1,158 rows (40.1% of R2L)">40%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 5%,var(--surface-1));color:var(--text-primary)" data-tip="true R2L -&gt; predicted DoS&#10;142 rows (4.9% of R2L)">5%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 16%,var(--surface-1));color:var(--text-primary)" data-tip="true R2L -&gt; predicted Probe&#10;466 rows (16.2% of R2L)">16%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 38%,var(--surface-1));color:var(--text-primary)" data-tip="true R2L -&gt; predicted R2L&#10;1,088 rows (37.7% of R2L)">38%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 1%,var(--surface-1));color:var(--text-primary)" data-tip="true R2L -&gt; predicted U2R&#10;31 rows (1.1% of R2L)">1%</td><td>2,885</td></tr><tr><th>U2R</th><td class="cell" style="background:color-mix(in oklab,var(--series-1) 18%,var(--surface-1));color:var(--text-primary)" data-tip="true U2R -&gt; predicted normal&#10;12 rows (17.9% of U2R)">18%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 1%,var(--surface-1));color:var(--text-primary)" data-tip="true U2R -&gt; predicted DoS&#10;1 rows (1.5% of U2R)">1%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 3%,var(--surface-1));color:var(--text-primary)" data-tip="true U2R -&gt; predicted Probe&#10;2 rows (3.0% of U2R)">3%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 18%,var(--surface-1));color:var(--text-primary)" data-tip="true U2R -&gt; predicted R2L&#10;12 rows (17.9% of U2R)">18%</td><td class="cell" style="background:color-mix(in oklab,var(--series-1) 60%,var(--surface-1));color:#fff" data-tip="true U2R -&gt; predicted U2R&#10;40 rows (59.7% of U2R)">60%</td><td>67</td></tr></table></div>
+      <h2 style="margin-top:20px">Per family</h2>
+      <div class="scroll"><table><tr><th>family</th><th>precision</th><th>recall</th><th>F1</th><th>support</th></tr>
+      <tr><td>normal</td><td>0.865</td><td>0.899</td><td>0.881</td><td>9,711</td></tr><tr><td>DoS</td><td>0.923</td><td>0.881</td><td>0.901</td><td>7,460</td></tr><tr><td>Probe</td><td>0.551</td><td>0.916</td><td>0.688</td><td>2,421</td></tr><tr><td>R2L</td><td>0.893</td><td>0.377</td><td>0.530</td><td>2,885</td></tr><tr><td>U2R</td><td>0.494</td><td>0.597</td><td>0.541</td><td>67</td></tr></table></div></div>
+  </div>
+  <div style="height:20px"></div>
+
+  <div class="card"><h2>Detection rate by attack type</h2>
+    <p class="sub">Share of each attack type's test records that raised an alert, largest types first.</p>
+    <div class="legend"><span><span class="key" style="background:var(--series-1)"></span>seen in training</span><span><span class="key" style="background:var(--series-2)"></span>novel (not in training data)</span></div><div class="scroll"><svg viewBox="0 0 640 842" role="img" width="640"><line x1="150.0" x2="150.0" y1="18" y2="838" stroke="var(--axis)" stroke-width="1"/><text x="150.0" y="13" text-anchor="middle">0%</text><line x1="258.5" x2="258.5" y1="18" y2="838" stroke="var(--grid)" stroke-width="1"/><text x="258.5" y="13" text-anchor="middle">25%</text><line x1="367.0" x2="367.0" y1="18" y2="838" stroke="var(--grid)" stroke-width="1"/><text x="367.0" y="13" text-anchor="middle">50%</text><line x1="475.5" x2="475.5" y1="18" y2="838" stroke="var(--grid)" stroke-width="1"/><text x="475.5" y="13" text-anchor="middle">75%</text><line x1="584.0" x2="584.0" y1="18" y2="838" stroke="var(--grid)" stroke-width="1"/><text x="584.0" y="13" text-anchor="middle">100%</text><g data-tip="neptune (DoS)
+4,657 test records
+detected 100.0%
+right family 99.2%
+seen in training"><rect x="0" y="22" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="37.0" text-anchor="end">neptune</text><path d="M150.0,26.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="37.0">100.0%</text></g><g data-tip="guess_passwd (R2L)
+1,231 test records
+detected 43.1%
+right family 26.8%
+seen in training"><rect x="0" y="44" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="59.0" text-anchor="end">guess_passwd</text><path d="M150.0,48.0h183.2a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-183.2z" fill="var(--series-1)"/><text class="val" x="343.2" y="59.0">43.1%</text></g><g data-tip="mscan (Probe)
+996 test records
+detected 100.0%
+right family 79.6%
+NOT in training data"><rect x="0" y="66" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="81.0" text-anchor="end">mscan</text><path d="M150.0,70.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-2)"/><text class="val" x="590.0" y="81.0">100.0%</text></g><g data-tip="warezmaster (R2L)
+944 test records
+detected 79.8%
+right family 79.0%
+seen in training"><rect x="0" y="88" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="103.0" text-anchor="end">warezmaster</text><path d="M150.0,92.0h342.2a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-342.2z" fill="var(--series-1)"/><text class="val" x="502.2" y="103.0">79.8%</text></g><g data-tip="apache2 (DoS)
+737 test records
+detected 99.7%
+right family 98.0%
+NOT in training data"><rect x="0" y="110" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="125.0" text-anchor="end">apache2</text><path d="M150.0,114.0h428.8a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-428.8z" fill="var(--series-2)"/><text class="val" x="588.8" y="125.0">99.7%</text></g><g data-tip="satan (Probe)
+735 test records
+detected 100.0%
+right family 100.0%
+seen in training"><rect x="0" y="132" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="147.0" text-anchor="end">satan</text><path d="M150.0,136.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="147.0">100.0%</text></g><g data-tip="processtable (DoS)
+685 test records
+detected 100.0%
+right family 21.2%
+NOT in training data"><rect x="0" y="154" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="169.0" text-anchor="end">processtable</text><path d="M150.0,158.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-2)"/><text class="val" x="590.0" y="169.0">100.0%</text></g><g data-tip="smurf (DoS)
+665 test records
+detected 100.0%
+right family 100.0%
+seen in training"><rect x="0" y="176" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="191.0" text-anchor="end">smurf</text><path d="M150.0,180.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="191.0">100.0%</text></g><g data-tip="back (DoS)
+359 test records
+detected 100.0%
+right family 100.0%
+seen in training"><rect x="0" y="198" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="213.0" text-anchor="end">back</text><path d="M150.0,202.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="213.0">100.0%</text></g><g data-tip="snmpguess (R2L)
+331 test records
+detected 79.8%
+right family 0.0%
+NOT in training data"><rect x="0" y="220" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="235.0" text-anchor="end">snmpguess</text><path d="M150.0,224.0h342.2a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-342.2z" fill="var(--series-2)"/><text class="val" x="502.2" y="235.0">79.8%</text></g><g data-tip="saint (Probe)
+319 test records
+detected 100.0%
+right family 100.0%
+NOT in training data"><rect x="0" y="242" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="257.0" text-anchor="end">saint</text><path d="M150.0,246.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-2)"/><text class="val" x="590.0" y="257.0">100.0%</text></g><g data-tip="mailbomb (DoS)
+293 test records
+detected 33.8%
+right family 0.0%
+NOT in training data"><rect x="0" y="264" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="279.0" text-anchor="end">mailbomb</text><path d="M150.0,268.0h142.6a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-142.6z" fill="var(--series-2)"/><text class="val" x="302.6" y="279.0">33.8%</text></g><g data-tip="snmpgetattack (R2L)
+178 test records
+detected 0.0%
+right family 0.0%
+NOT in training data"><rect x="0" y="286" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="301.0" text-anchor="end">snmpgetattack</text><path d="" fill="var(--series-2)"/><text class="val" x="156.0" y="301.0">0.0%</text></g><g data-tip="portsweep (Probe)
+157 test records
+detected 100.0%
+right family 100.0%
+seen in training"><rect x="0" y="308" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="323.0" text-anchor="end">portsweep</text><path d="M150.0,312.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="323.0">100.0%</text></g><g data-tip="ipsweep (Probe)
+141 test records
+detected 100.0%
+right family 100.0%
+seen in training"><rect x="0" y="330" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="345.0" text-anchor="end">ipsweep</text><path d="M150.0,334.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="345.0">100.0%</text></g><g data-tip="httptunnel (R2L)
+133 test records
+detected 97.0%
+right family 0.8%
+NOT in training data"><rect x="0" y="352" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="367.0" text-anchor="end">httptunnel</text><path d="M150.0,356.0h416.9a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-416.9z" fill="var(--series-2)"/><text class="val" x="576.9" y="367.0">97.0%</text></g><g data-tip="nmap (Probe)
+73 test records
+detected 100.0%
+right family 100.0%
+seen in training"><rect x="0" y="374" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="389.0" text-anchor="end">nmap</text><path d="M150.0,378.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="389.0">100.0%</text></g><g data-tip="pod (DoS)
+41 test records
+detected 100.0%
+right family 100.0%
+seen in training"><rect x="0" y="396" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="411.0" text-anchor="end">pod</text><path d="M150.0,400.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="411.0">100.0%</text></g><g data-tip="buffer_overflow (U2R)
+20 test records
+detected 90.0%
+right family 70.0%
+seen in training"><rect x="0" y="418" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="433.0" text-anchor="end">buffer_overflow</text><path d="M150.0,422.0h386.6a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-386.6z" fill="var(--series-1)"/><text class="val" x="546.6" y="433.0">90.0%</text></g><g data-tip="multihop (R2L)
+18 test records
+detected 88.9%
+right family 22.2%
+seen in training"><rect x="0" y="440" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="455.0" text-anchor="end">multihop</text><path d="M150.0,444.0h381.8a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-381.8z" fill="var(--series-1)"/><text class="val" x="541.8" y="455.0">88.9%</text></g><g data-tip="named (R2L)
+17 test records
+detected 88.2%
+right family 17.6%
+NOT in training data"><rect x="0" y="462" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="477.0" text-anchor="end">named</text><path d="M150.0,466.0h378.9a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-378.9z" fill="var(--series-2)"/><text class="val" x="538.9" y="477.0">88.2%</text></g><g data-tip="ps (U2R)
+15 test records
+detected 80.0%
+right family 33.3%
+NOT in training data"><rect x="0" y="484" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="499.0" text-anchor="end">ps</text><path d="M150.0,488.0h343.2a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-343.2z" fill="var(--series-2)"/><text class="val" x="503.2" y="499.0">80.0%</text></g><g data-tip="sendmail (R2L)
+14 test records
+detected 35.7%
+right family 0.0%
+NOT in training data"><rect x="0" y="506" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="521.0" text-anchor="end">sendmail</text><path d="M150.0,510.0h151.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-151.0z" fill="var(--series-2)"/><text class="val" x="311.0" y="521.0">35.7%</text></g><g data-tip="rootkit (U2R)
+13 test records
+detected 53.8%
+right family 46.2%
+seen in training"><rect x="0" y="528" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="543.0" text-anchor="end">rootkit</text><path d="M150.0,532.0h229.7a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-229.7z" fill="var(--series-1)"/><text class="val" x="389.7" y="543.0">53.8%</text></g><g data-tip="xterm (U2R)
+13 test records
+detected 92.3%
+right family 76.9%
+NOT in training data"><rect x="0" y="550" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="565.0" text-anchor="end">xterm</text><path d="M150.0,554.0h396.6a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-396.6z" fill="var(--series-2)"/><text class="val" x="556.6" y="565.0">92.3%</text></g><g data-tip="teardrop (DoS)
+12 test records
+detected 100.0%
+right family 100.0%
+seen in training"><rect x="0" y="572" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="587.0" text-anchor="end">teardrop</text><path d="M150.0,576.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="587.0">100.0%</text></g><g data-tip="xlock (R2L)
+9 test records
+detected 55.6%
+right family 11.1%
+NOT in training data"><rect x="0" y="594" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="609.0" text-anchor="end">xlock</text><path d="M150.0,598.0h237.1a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-237.1z" fill="var(--series-2)"/><text class="val" x="397.1" y="609.0">55.6%</text></g><g data-tip="land (DoS)
+7 test records
+detected 100.0%
+right family 100.0%
+seen in training"><rect x="0" y="616" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="631.0" text-anchor="end">land</text><path d="M150.0,620.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="631.0">100.0%</text></g><g data-tip="xsnoop (R2L)
+4 test records
+detected 100.0%
+right family 0.0%
+NOT in training data"><rect x="0" y="638" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="653.0" text-anchor="end">xsnoop</text><path d="M150.0,642.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-2)"/><text class="val" x="590.0" y="653.0">100.0%</text></g><g data-tip="ftp_write (R2L)
+3 test records
+detected 100.0%
+right family 66.7%
+seen in training"><rect x="0" y="660" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="675.0" text-anchor="end">ftp_write</text><path d="M150.0,664.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="675.0">100.0%</text></g><g data-tip="loadmodule (U2R)
+2 test records
+detected 100.0%
+right family 50.0%
+seen in training"><rect x="0" y="682" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="697.0" text-anchor="end">loadmodule</text><path d="M150.0,686.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="697.0">100.0%</text></g><g data-tip="perl (U2R)
+2 test records
+detected 100.0%
+right family 100.0%
+seen in training"><rect x="0" y="704" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="719.0" text-anchor="end">perl</text><path d="M150.0,708.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="719.0">100.0%</text></g><g data-tip="phf (R2L)
+2 test records
+detected 50.0%
+right family 50.0%
+seen in training"><rect x="0" y="726" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="741.0" text-anchor="end">phf</text><path d="M150.0,730.0h213.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-213.0z" fill="var(--series-1)"/><text class="val" x="373.0" y="741.0">50.0%</text></g><g data-tip="sqlattack (U2R)
+2 test records
+detected 100.0%
+right family 100.0%
+NOT in training data"><rect x="0" y="748" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="763.0" text-anchor="end">sqlattack</text><path d="M150.0,752.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-2)"/><text class="val" x="590.0" y="763.0">100.0%</text></g><g data-tip="udpstorm (DoS)
+2 test records
+detected 100.0%
+right family 0.0%
+NOT in training data"><rect x="0" y="770" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="785.0" text-anchor="end">udpstorm</text><path d="M150.0,774.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-2)"/><text class="val" x="590.0" y="785.0">100.0%</text></g><g data-tip="worm (DoS)
+2 test records
+detected 0.0%
+right family 0.0%
+NOT in training data"><rect x="0" y="792" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="807.0" text-anchor="end">worm</text><path d="" fill="var(--series-2)"/><text class="val" x="156.0" y="807.0">0.0%</text></g><g data-tip="imap (R2L)
+1 test records
+detected 100.0%
+right family 0.0%
+seen in training"><rect x="0" y="814" width="640" height="22" fill="transparent"/><text class="lbl" x="140" y="829.0" text-anchor="end">imap</text><path d="M150.0,818.0h430.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-430.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="829.0">100.0%</text></g></svg></div>
+    <details><summary>Table view</summary><div class="scroll"><table>
+      <tr><th>attack</th><th>family</th><th>records</th><th>detected</th><th>right family</th><th>seen in training</th></tr>
+      <tr><td>neptune</td><td>DoS</td><td>4,657</td><td>100.0%</td><td>99.2%</td><td>yes</td></tr><tr><td>guess_passwd</td><td>R2L</td><td>1,231</td><td>43.1%</td><td>26.8%</td><td>yes</td></tr><tr><td>mscan</td><td>Probe</td><td>996</td><td>100.0%</td><td>79.6%</td><td>no</td></tr><tr><td>warezmaster</td><td>R2L</td><td>944</td><td>79.8%</td><td>79.0%</td><td>yes</td></tr><tr><td>apache2</td><td>DoS</td><td>737</td><td>99.7%</td><td>98.0%</td><td>no</td></tr><tr><td>satan</td><td>Probe</td><td>735</td><td>100.0%</td><td>100.0%</td><td>yes</td></tr><tr><td>processtable</td><td>DoS</td><td>685</td><td>100.0%</td><td>21.2%</td><td>no</td></tr><tr><td>smurf</td><td>DoS</td><td>665</td><td>100.0%</td><td>100.0%</td><td>yes</td></tr><tr><td>back</td><td>DoS</td><td>359</td><td>100.0%</td><td>100.0%</td><td>yes</td></tr><tr><td>snmpguess</td><td>R2L</td><td>331</td><td>79.8%</td><td>0.0%</td><td>no</td></tr><tr><td>saint</td><td>Probe</td><td>319</td><td>100.0%</td><td>100.0%</td><td>no</td></tr><tr><td>mailbomb</td><td>DoS</td><td>293</td><td>33.8%</td><td>0.0%</td><td>no</td></tr><tr><td>snmpgetattack</td><td>R2L</td><td>178</td><td>0.0%</td><td>0.0%</td><td>no</td></tr><tr><td>portsweep</td><td>Probe</td><td>157</td><td>100.0%</td><td>100.0%</td><td>yes</td></tr><tr><td>ipsweep</td><td>Probe</td><td>141</td><td>100.0%</td><td>100.0%</td><td>yes</td></tr><tr><td>httptunnel</td><td>R2L</td><td>133</td><td>97.0%</td><td>0.8%</td><td>no</td></tr><tr><td>nmap</td><td>Probe</td><td>73</td><td>100.0%</td><td>100.0%</td><td>yes</td></tr><tr><td>pod</td><td>DoS</td><td>41</td><td>100.0%</td><td>100.0%</td><td>yes</td></tr><tr><td>buffer_overflow</td><td>U2R</td><td>20</td><td>90.0%</td><td>70.0%</td><td>yes</td></tr><tr><td>multihop</td><td>R2L</td><td>18</td><td>88.9%</td><td>22.2%</td><td>yes</td></tr><tr><td>named</td><td>R2L</td><td>17</td><td>88.2%</td><td>17.6%</td><td>no</td></tr><tr><td>ps</td><td>U2R</td><td>15</td><td>80.0%</td><td>33.3%</td><td>no</td></tr><tr><td>sendmail</td><td>R2L</td><td>14</td><td>35.7%</td><td>0.0%</td><td>no</td></tr><tr><td>rootkit</td><td>U2R</td><td>13</td><td>53.8%</td><td>46.2%</td><td>yes</td></tr><tr><td>xterm</td><td>U2R</td><td>13</td><td>92.3%</td><td>76.9%</td><td>no</td></tr><tr><td>teardrop</td><td>DoS</td><td>12</td><td>100.0%</td><td>100.0%</td><td>yes</td></tr><tr><td>xlock</td><td>R2L</td><td>9</td><td>55.6%</td><td>11.1%</td><td>no</td></tr><tr><td>land</td><td>DoS</td><td>7</td><td>100.0%</td><td>100.0%</td><td>yes</td></tr><tr><td>xsnoop</td><td>R2L</td><td>4</td><td>100.0%</td><td>0.0%</td><td>no</td></tr><tr><td>ftp_write</td><td>R2L</td><td>3</td><td>100.0%</td><td>66.7%</td><td>yes</td></tr><tr><td>loadmodule</td><td>U2R</td><td>2</td><td>100.0%</td><td>50.0%</td><td>yes</td></tr><tr><td>perl</td><td>U2R</td><td>2</td><td>100.0%</td><td>100.0%</td><td>yes</td></tr><tr><td>phf</td><td>R2L</td><td>2</td><td>50.0%</td><td>50.0%</td><td>yes</td></tr><tr><td>sqlattack</td><td>U2R</td><td>2</td><td>100.0%</td><td>100.0%</td><td>no</td></tr><tr><td>udpstorm</td><td>DoS</td><td>2</td><td>100.0%</td><td>0.0%</td><td>no</td></tr><tr><td>worm</td><td>DoS</td><td>2</td><td>0.0%</td><td>0.0%</td><td>no</td></tr><tr><td>imap</td><td>R2L</td><td>1</td><td>100.0%</td><td>0.0%</td><td>yes</td></tr></table></div></details>
+  </div>
+
+  <div class="card"><h2>Operating points</h2>
+    <p class="sub">The same model at its calibrated threshold vs. the naive 0.5 cut-off. Precision and accuracy
+    depend on the attack/normal mix of the test set; detection and false-alarm rates do not.</p>
+    <div class="scroll"><table><tr><th></th><th>threshold</th><th>detection</th><th>false alarms</th>
+    <th>precision</th><th>F1</th><th>accuracy</th></tr><tr><td>Calibrated threshold (test)</td><td>0.065</td><td>89.3%</td><td>10.1%</td><td>92.1%</td><td>0.907</td><td>89.6%</td></tr><tr><td>Default 0.5 (test)</td><td>0.5</td><td>58.3%</td><td>2.6%</td><td>96.7%</td><td>0.728</td><td>75.1%</td></tr><tr><td>Calibrated threshold (validation)</td><td>0.065</td><td>100.0%</td><td>0.9%</td><td>99.0%</td><td>0.995</td><td>99.5%</td></tr></table></div></div>
+
+  <div class="card"><h2>What the model looks at</h2><p class="sub">Top input features by importance, scaled to the strongest feature. One-hot columns are summed back to their source field. Hover a bar for its share of total importance.</p><div class="scroll"><svg viewBox="0 0 640 358" role="img" width="640"><line x1="230.0" x2="230.0" y1="18" y2="354" stroke="var(--axis)" stroke-width="1"/><text x="230.0" y="13" text-anchor="middle">0%</text><line x1="318.5" x2="318.5" y1="18" y2="354" stroke="var(--grid)" stroke-width="1"/><text x="318.5" y="13" text-anchor="middle">25%</text><line x1="407.0" x2="407.0" y1="18" y2="354" stroke="var(--grid)" stroke-width="1"/><text x="407.0" y="13" text-anchor="middle">50%</text><line x1="495.5" x2="495.5" y1="18" y2="354" stroke="var(--grid)" stroke-width="1"/><text x="495.5" y="13" text-anchor="middle">75%</text><line x1="584.0" x2="584.0" y1="18" y2="354" stroke="var(--grid)" stroke-width="1"/><text x="584.0" y="13" text-anchor="middle">100%</text><g data-tip="service
+12.1% of total importance"><rect x="0" y="22" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="37.0" text-anchor="end">service</text><path d="M230.0,26.0h350.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-350.0z" fill="var(--series-1)"/><text class="val" x="590.0" y="37.0"></text></g><g data-tip="src_bytes
+9.2% of total importance"><rect x="0" y="44" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="59.0" text-anchor="end">src_bytes</text><path d="M230.0,48.0h263.6a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-263.6z" fill="var(--series-1)"/><text class="val" x="503.6" y="59.0"></text></g><g data-tip="dst_host_srv_count
+7.2% of total importance"><rect x="0" y="66" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="81.0" text-anchor="end">dst_host_srv_count</text><path d="M230.0,70.0h207.2a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-207.2z" fill="var(--series-1)"/><text class="val" x="447.2" y="81.0"></text></g><g data-tip="dst_bytes
+6.9% of total importance"><rect x="0" y="88" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="103.0" text-anchor="end">dst_bytes</text><path d="M230.0,92.0h199.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-199.0z" fill="var(--series-1)"/><text class="val" x="439.0" y="103.0"></text></g><g data-tip="flag
+5.2% of total importance"><rect x="0" y="110" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="125.0" text-anchor="end">flag</text><path d="M230.0,114.0h147.9a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-147.9z" fill="var(--series-1)"/><text class="val" x="387.9" y="125.0"></text></g><g data-tip="logged_in
+4.1% of total importance"><rect x="0" y="132" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="147.0" text-anchor="end">logged_in</text><path d="M230.0,136.0h115.9a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-115.9z" fill="var(--series-1)"/><text class="val" x="355.9" y="147.0"></text></g><g data-tip="dst_host_same_src_port_rate
+3.9% of total importance"><rect x="0" y="154" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="169.0" text-anchor="end">dst_host_same_src_port_rate</text><path d="M230.0,158.0h110.2a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-110.2z" fill="var(--series-1)"/><text class="val" x="350.2" y="169.0"></text></g><g data-tip="dst_host_diff_srv_rate
+3.9% of total importance"><rect x="0" y="176" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="191.0" text-anchor="end">dst_host_diff_srv_rate</text><path d="M230.0,180.0h110.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-110.0z" fill="var(--series-1)"/><text class="val" x="350.0" y="191.0"></text></g><g data-tip="srv_count
+3.6% of total importance"><rect x="0" y="198" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="213.0" text-anchor="end">srv_count</text><path d="M230.0,202.0h102.5a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-102.5z" fill="var(--series-1)"/><text class="val" x="342.5" y="213.0"></text></g><g data-tip="count
+3.3% of total importance"><rect x="0" y="220" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="235.0" text-anchor="end">count</text><path d="M230.0,224.0h92.1a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-92.1z" fill="var(--series-1)"/><text class="val" x="332.1" y="235.0"></text></g><g data-tip="protocol_type
+3.1% of total importance"><rect x="0" y="242" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="257.0" text-anchor="end">protocol_type</text><path d="M230.0,246.0h86.8a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-86.8z" fill="var(--series-1)"/><text class="val" x="326.8" y="257.0"></text></g><g data-tip="dst_host_count
+3.1% of total importance"><rect x="0" y="264" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="279.0" text-anchor="end">dst_host_count</text><path d="M230.0,268.0h86.2a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-86.2z" fill="var(--series-1)"/><text class="val" x="326.2" y="279.0"></text></g><g data-tip="duration
+2.8% of total importance"><rect x="0" y="286" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="301.0" text-anchor="end">duration</text><path d="M230.0,290.0h77.3a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-77.3z" fill="var(--series-1)"/><text class="val" x="317.3" y="301.0"></text></g><g data-tip="dst_host_serror_rate
+2.8% of total importance"><rect x="0" y="308" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="323.0" text-anchor="end">dst_host_serror_rate</text><path d="M230.0,312.0h76.5a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-76.5z" fill="var(--series-1)"/><text class="val" x="316.5" y="323.0"></text></g><g data-tip="dst_host_same_srv_rate
+2.7% of total importance"><rect x="0" y="330" width="640" height="22" fill="transparent"/><text class="lbl" x="220" y="345.0" text-anchor="end">dst_host_same_srv_rate</text><path d="M230.0,334.0h75.0a4,4 0 0 1 4,4v6.0a4,4 0 0 1 -4,4h-75.0z" fill="var(--series-1)"/><text class="val" x="315.0" y="345.0"></text></g></svg></div></div>
+
+  <p class="foot">NetSentry 0.1.0 · scikit-learn 1.7.1 ·
+  model <code>rf</code> (class-balanced) · seed 0 ·
+  validation rows 12,596 · test rows 22,544</p>
+</main>
+<div id="tip" hidden></div><script>
+const tip=document.getElementById('tip');
+function show(e,text){tip.textContent=text;tip.hidden=false;
+  const w=tip.offsetWidth,h=tip.offsetHeight;let x=e.clientX+14,y=e.clientY+14;
+  if(x+w>innerWidth-8)x=e.clientX-w-14; if(y+h>innerHeight-8)y=e.clientY-h-14;
+  tip.style.left=x+'px';tip.style.top=y+'px'}
+document.addEventListener('pointermove',e=>{
+  const t=e.target.closest('[data-tip]'); if(t){show(e,t.dataset.tip);return}
+  if(!e.target.closest('.roc-hit'))tip.hidden=true});
+document.querySelectorAll('svg.roc').forEach(svg=>{
+  const d=JSON.parse(svg.dataset.roc),hit=svg.querySelector('.roc-hit'),
+        cross=svg.querySelector('.cross'),dot=svg.querySelector('.cross-dot'),
+        X=+svg.dataset.x0,W=+svg.dataset.w,Y=+svg.dataset.y0,H=+svg.dataset.h;
+  hit.addEventListener('pointermove',e=>{
+    const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;
+    const q=p.matrixTransform(svg.getScreenCTM().inverse()),f=Math.min(1,Math.max(0,(q.x-X)/W));
+    let i=0;for(let k=0;k<d.fpr.length;k++){if(Math.abs(d.fpr[k]-f)<Math.abs(d.fpr[i]-f))i=k}
+    const cx=X+d.fpr[i]*W,cy=Y+H-d.tpr[i]*H;
+    cross.setAttribute('x1',cx);cross.setAttribute('x2',cx);cross.style.display='';
+    dot.setAttribute('cx',cx);dot.setAttribute('cy',cy);dot.style.display='';
+    show(e,'False-alarm rate '+(d.fpr[i]*100).toFixed(1)+'%\nDetection rate '+(d.tpr[i]*100).toFixed(1)+'%')});
+  hit.addEventListener('pointerleave',()=>{cross.style.display='none';dot.style.display='none';tip.hidden=true})});
+</script></body></html>
