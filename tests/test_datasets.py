@@ -13,7 +13,8 @@ def test_read_nsl_kdd_official_format(nsl_kdd_dir):
     assert list(train.X.columns) == NSL_KDD_FEATURES
     assert set(train.category) == {"normal", "DoS", "Probe", "R2L"}
     assert set(test.attack) == {"normal", "neptune", "mscan", "guess_passwd"}
-    assert train.X["service"].dtype == object
+    # object dtype on pandas 2, the dedicated string dtype on pandas 3
+    assert pd.api.types.is_string_dtype(train.X["service"])
 
 
 def test_read_nsl_kdd_header_and_unlabelled(tmp_path, nsl_kdd_dir):
